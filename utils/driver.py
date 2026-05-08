@@ -1,7 +1,5 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 from config.settings import HEADLESS
 import os
 import platform
@@ -57,7 +55,6 @@ def get_driver():
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
     options.add_argument(f"--user-data-dir={tempfile.mkdtemp()}")
-
     options.add_argument("--disable-password-manager-reauthentication")
 
     prefs = {
@@ -70,8 +67,7 @@ def get_driver():
     if HEADLESS:
         options.add_argument("--headless=new")
 
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)
 
     try:
         driver.maximize_window()
