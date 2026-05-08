@@ -1,0 +1,24 @@
+name: Run Selenium Tests on OCI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Execute automated tests on OCI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run tests through SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.OCI_HOST }}
+          username: ${{ secrets.OCI_USER }}
+          key: ${{ secrets.OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 10m
+          script: |
+            /home/opc/run-tests.sh
