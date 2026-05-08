@@ -9,32 +9,58 @@ class DashboardPage(BasePage):
 
     def verify_dashboard_loaded(self):
         """
-        Verifica que el dashboard esté completamente cargado.
-        Valida la presencia del botón de navegación.
+        Verifica que el dashboard esté cargado.
+
+        La versión actual del frontend muestra:
+        - Encabezado "Vista General"
+        - Subtítulo "Resumen del proyecto"
+        - Sección "Proyectos en curso"
         """
-        # Buscar el botón de toggle del menú (nav-toggle-btn)
         return self.find_present(
-            (By.XPATH, "//button[@class='nav-toggle-btn']"),
+            (
+                By.XPATH,
+                "//h2[normalize-space()='Vista General']"
+            )
         )
 
     def get_user_name(self):
-        """Obtiene el nombre del usuario actual del dashboard"""
-        # Ajusta el selector según tu aplicación
-        return self.get_element_text((By.XPATH, "//div[@role='button']//p[1]"))
-
-    def verify_nav_menu_visible(self):
-        """Verifica que el botón de navegación está presente"""
-        return self.find_present(
-            (By.XPATH, "//button[@class='nav-toggle-btn']")
+        """
+        Obtiene el email o identificador del usuario visible en el menú lateral.
+        """
+        return self.get_element_text(
+            (
+                By.CSS_SELECTOR,
+                ".nav-rail-email"
+            )
         )
 
-    def toggle_nav_menu(self):
-        """Abre/cierra el menú de navegación"""
-        self.click((By.XPATH, "//button[@class='nav-toggle-btn']"))
+    def verify_nav_menu_visible(self):
+        """
+        Verifica que el menú lateral principal esté presente.
+        """
+        return self.find_present(
+            (
+                By.CSS_SELECTOR,
+                "aside.nav-quick-rail[role='navigation']"
+            )
+        )
+
+    def verify_nav_link_visible(self, label):
+        """
+        Verifica que exista un link de navegación por su aria-label.
+        Ejemplos: Inicio, Tareas, Agent, Proyectos, Equipos.
+        """
+        return self.find_present(
+            (
+                By.XPATH,
+                f"//aside[contains(@class, 'nav-quick-rail')]"
+                f"//a[@aria-label='{label}']"
+            )
+        )
 
     def verify_project_in_progress(self, project_name="Oracle Java Bot"):
         """
-        Verifica que un proyecto aparezca en la sección "Proyectos en curso".
+        Verifica que un proyecto aparezca en la sección 'Proyectos en curso'.
         """
         return self.assert_element_visible(
             (
@@ -42,8 +68,41 @@ class DashboardPage(BasePage):
                 (
                     "//div[contains(@class, 'page-section')]"
                     "[.//span[normalize-space()='Proyectos en curso']]"
-                    f"//tbody//td[contains(@class, 'cell-primary') and normalize-space()='{project_name}']"
+                    f"//tbody//td[contains(@class, 'cell-primary') "
+                    f"and normalize-space()='{project_name}']"
                 ),
             ),
             message=f"No se encontró el proyecto en curso '{project_name}' en dashboard",
+        )
+
+    def verify_dashboard_kpi_visible(self, kpi_name):
+        """
+        Verifica que una métrica/KPI esté visible en el dashboard.
+        Ejemplos:
+        - Avg General Progress
+        - Avg Sprint Completion
+        - Avg On-Time Delivery
+        - Avg Estimation Precision
+        - Total Active Tasks
+        """
+        return self.find_present(
+            (
+                By.XPATH,
+                f"//*[normalize-space()='{kpi_name}']"
+            )
+        )
+
+    def verify_chart_visible(self, chart_title):
+        """
+        Verifica que una gráfica esté visible por su título.
+        Ejemplos:
+        - Delivery Health
+        - Estimation vs Real (hrs)
+        - Resource Workload / Productivity
+        """
+        return self.find_present(
+            (
+                By.XPATH,
+                f"//h3[normalize-space()='{chart_title}']"
+            )
         )
