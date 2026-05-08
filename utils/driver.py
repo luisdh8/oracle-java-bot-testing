@@ -5,6 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from config.settings import HEADLESS
 import os
 import platform
+import tempfile
 
 
 def resolve_chrome_binary():
@@ -12,9 +13,9 @@ def resolve_chrome_binary():
     Resuelve la ruta del binario de Chrome según el ambiente de ejecución.
 
     Prioridad:
-    1. Variable de entorno CHROME_BINARY, útil para CI/OCI/Linux.
+    1. CHROME_BINARY desde .env o variable de entorno.
     2. Rutas locales conocidas de Windows para el desarrollador de testing.
-    3. Rutas comunes de Linux.
+    3. Rutas comunes de Linux/OCI.
     4. None, para permitir que Selenium use Chrome del sistema si lo encuentra.
     """
 
@@ -71,13 +72,17 @@ def get_driver():
     else:
         print("[Selenium] No explicit Chrome binary configured. Selenium will use system default.")
 
-    # Argumentos para compatibilidad en CI/Linux/OCI
+    # Configuración base para ejecución en CI/Linux/OCI.
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
 
-    # Argumentos existentes para reducir interferencias del navegador
+    # Perfil temporal limpio por ejecución.
+    # Evita conflictos con perfiles bloqueados, cache o sesiones anteriores.
+    options.add_argument(f"--user-data-dir={tempfile.mkdtemp()}")
+
+    # Argumentos existentes para reducir interferencias del navegador.
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--disable-password-manager-reauthentication")
 
@@ -100,7 +105,7 @@ def get_driver():
     try:
         driver.maximize_window()
     except Exception:
-        # En headless Linux puede no ser necesario o puede fallar dependiendo del entorno.
+        # En headless Linux puede no aplicar, porque ya usamos window-size.
         pass
 
     return driver
