@@ -1,6 +1,5 @@
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
-import time
 
 
 class ProjectsPage(BasePage):
@@ -9,18 +8,14 @@ class ProjectsPage(BasePage):
     # Localizadores centralizados
     TEAM_COMBOBOX = (By.XPATH, "(//div[@role='combobox'])[1]")
     PROJECT_COMBOBOX = (By.XPATH, "(//div[@role='combobox'])[2]")
+    PROJECTS_LINK = (
+        By.XPATH,
+        "//aside[contains(@class, 'nav-quick-rail')]//a[@aria-label='Proyectos' or @href='/proyectos']",
+    )
 
     def go_to_projects(self):
-        """Navega a la sección de Proyectos, abriendo el menú si es necesario"""
-        try:
-            self.click((By.XPATH, "//span[text()='Proyectos']"))
-        except:
-            # Si falla, probablemente el menú está cerrado
-            # Abre el menú de navegación
-            self.click((By.XPATH, "//button[@class='nav-toggle-btn']"))
-            time.sleep(0.5)
-            # Intentar nuevamente
-            self.click((By.XPATH, "//span[text()='Proyectos']"))
+        """Navega a la sección de Proyectos usando el navbar rápido."""
+        self.click(self.PROJECTS_LINK)
 
     def filter_by_team(self, team_name):
         """
@@ -33,12 +28,19 @@ class ProjectsPage(BasePage):
 
     def select_project_dashboard(self, project_name):
         """
-        Selecciona un proyecto del dashboard usando el segundo combobox.
+        Selecciona un proyecto desde la tarjeta correspondiente.
 
         Args:
             project_name: Nombre del proyecto
         """
-        self.select_dropdown_mui(self.PROJECT_COMBOBOX, project_name)
+        card_locator = (
+            By.XPATH,
+            (
+                "//section[contains(@class, '_section_')]"
+                f"//button[contains(@class, '_card_')][.//h3[normalize-space()='{project_name}']]"
+            ),
+        )
+        self.click(card_locator)
 
     def verify_dashboard_loaded(self, project_name):
         """
@@ -51,6 +53,6 @@ class ProjectsPage(BasePage):
             Element si está visible, raises exception si no
         """
         return self.assert_element_visible(
-            (By.XPATH, f"//span[text()='{project_name}']"),
+            (By.XPATH, f"//h2[normalize-space()='{project_name}']"),
             message=f"Dashboard para proyecto '{project_name}' no cargó"
         )
