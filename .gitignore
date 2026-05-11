@@ -6,3 +6,4 @@ reports/
 AGENTS.md
 .agents/
 skills-lock.json
+*.sh
