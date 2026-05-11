@@ -3,3 +3,6 @@
 .DS_Store
 *.pyc
 reports/
+AGENTS.md
+.agents/
+skills-lock.json

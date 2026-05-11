@@ -6,8 +6,10 @@ from pages.base_page import BasePage
 
 
 class TaskPage(BasePage):
-    TASKS_LINK = (By.XPATH, "//span[normalize-space()='Tareas']")
-    NAV_TOGGLE = (By.XPATH, "//button[@class='nav-toggle-btn']")
+    TASKS_LINK = (
+        By.XPATH,
+        "//aside[contains(@class, 'nav-quick-rail')]//a[@aria-label='Tareas' or @href='/tareas']",
+    )
     NEW_TASK_BUTTON = (By.XPATH, "//button[contains(., 'Nueva tarea')]")
     MODAL = (By.XPATH, "//div[@role='dialog']")
     SUBMIT_BUTTON = (
@@ -22,13 +24,7 @@ class TaskPage(BasePage):
     ]
 
     def go_to_tasks(self):
-        """Navega a la sección de Tareas, abriendo el menú si es necesario"""
-        task_items = self.driver.find_elements(*self.TASKS_LINK)
-        if task_items and task_items[0].is_displayed():
-            task_items[0].click()
-            return
-
-        self.click(self.NAV_TOGGLE)
+        """Navega a la sección de Tareas usando el navbar rápido."""
         self.click(self.TASKS_LINK)
 
     def open_new_task_modal(self):
@@ -96,7 +92,7 @@ class TaskPage(BasePage):
             date_input.send_keys(value)
 
     def fill_form(self, title="Test Selenium", description="test case",
-                  project="Oracle Java Bot", priority="Media", deadline="2026-04-26T17:00",
+                  project="Oracle Java Bot", priority="Media", deadline="2026-05-26T17:00",
                   estimated_time="1"):
         """
         Llena el formulario de nueva tarea.
