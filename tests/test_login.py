@@ -10,7 +10,7 @@ def test_login_success(driver):
     dashboard_page = DashboardPage(driver)
 
     login_page.load(BASE_URL)
-    login_page.login(email=EMAIAL, password=PASSWORD)
+    login_page.login(email=EMAIL, password=PASSWORD)
 
     # Validación: dashboard cargado
     dashboard_page.verify_dashboard_loaded()
