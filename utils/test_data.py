@@ -138,7 +138,7 @@ class NegativeTestData:
         return {
             "email": "invalid.user@example.com",
             "password": "invalid-password",
-            "expected_error": "Request failed with status code 500",
+            "expected_error": "Usuario no encontrado",
         }
 
     @staticmethod

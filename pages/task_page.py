@@ -12,6 +12,24 @@ class TaskPage(BasePage):
     )
     NEW_TASK_BUTTON = (By.XPATH, "//button[contains(., 'Nueva tarea')]")
     MODAL = (By.XPATH, "//div[@role='dialog']")
+    PROJECT_COMBOBOX = (
+        By.XPATH,
+        (
+            "//div[@role='dialog']//div[@role='combobox' and "
+            "(@id='mui-component-select-projectId' or "
+            "@aria-labelledby='mui-component-select-projectId' or "
+            "following-sibling::input[@name='projectId'])]"
+        ),
+    )
+    PRIORITY_COMBOBOX = (
+        By.XPATH,
+        (
+            "//div[@role='dialog']//div[@role='combobox' and "
+            "(@id='mui-component-select-prioridadId' or "
+            "@aria-labelledby='mui-component-select-prioridadId' or "
+            "following-sibling::input[@name='prioridadId'])]"
+        ),
+    )
     SUBMIT_BUTTON = (
         By.XPATH,
         "//div[@role='dialog']//button[@type='submit' and contains(., 'Agregar Tarea')]",
@@ -107,11 +125,8 @@ class TaskPage(BasePage):
         """
         self.find_visible(self.MODAL)
 
-        # Proyecto (primer combobox del modal)
-        self.select_dropdown_mui(
-            (By.XPATH, "(//div[@role='dialog']//div[@role='combobox'])[1]"),
-            project
-        )
+        # Proyecto
+        self.select_dropdown_mui(self.PROJECT_COMBOBOX, project)
 
         # Título
         self._clear_and_type(
@@ -146,11 +161,8 @@ class TaskPage(BasePage):
             estimated_time,
         )
 
-        # Prioridad (segundo combobox del modal)
-        self.select_dropdown_mui(
-            (By.XPATH, "(//div[@role='dialog']//div[@role='combobox'])[2]"),
-            priority
-        )
+        # Prioridad
+        self.select_dropdown_mui(self.PRIORITY_COMBOBOX, priority)
 
     def submit(self):
         """Envía el formulario usando el botón 'Agregar Tarea'"""
