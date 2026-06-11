@@ -19,7 +19,7 @@ class DashboardPage(BasePage):
         return self.find_present(
             (
                 By.XPATH,
-                "//h2[normalize-space()='Vista General']"
+                "//h2[normalize-space()='Resumen' or normalize-space()='Vista General']"
             )
         )
 
